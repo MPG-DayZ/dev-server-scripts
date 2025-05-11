@@ -26,7 +26,7 @@ if ($clearLogsServer) {
             Write-ColorOutput "logs.found_server" -ForegroundColor "White" -Prefix "prefixes.logs" -FormatArgs @($serverLogs.Count)
             foreach ($log in $serverLogs) {
                 Write-ColorOutput "logs.deleting" -ForegroundColor "White" -Prefix "prefixes.logs" -FormatArgs @($log.FullName)
-                Remove-Item $log.FullName -Force -ErrorAction SilentlyContinue
+                Remove-Item -LiteralPath $log.FullName -Force -ErrorAction SilentlyContinue
             }
             Write-ColorOutput "logs.server_cleaned" -ForegroundColor "White" -Prefix "prefixes.logs"
         }
@@ -36,7 +36,7 @@ if ($clearLogsServer) {
         if ($profileLogs) {
             foreach ($log in $profileLogs) {
                 Write-ColorOutput "logs.deleting" -ForegroundColor "White" -Prefix "prefixes.logs" -FormatArgs @($log.FullName)
-                Remove-Item $log.FullName -Force -ErrorAction SilentlyContinue
+                Remove-Item -LiteralPath $log.FullName -Force -ErrorAction SilentlyContinue
             }
         }
         else {
@@ -58,7 +58,7 @@ if ($clearLogsClient) {
             Write-ColorOutput "logs.found_client" -ForegroundColor "White" -Prefix "prefixes.logs" -FormatArgs @($clientLogs.Count)
             foreach ($log in $clientLogs) {
                 Write-ColorOutput "logs.deleting" -ForegroundColor "White" -Prefix "prefixes.logs" -FormatArgs @($log.FullName)
-                Remove-Item $log.FullName -Force -ErrorAction SilentlyContinue
+                Remove-Item -LiteralPath $log.FullName -Force -ErrorAction SilentlyContinue
             }
             Write-ColorOutput "logs.client_cleaned" -ForegroundColor "White" -Prefix "prefixes.logs"
         }

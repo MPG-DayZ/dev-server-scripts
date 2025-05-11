@@ -17,6 +17,9 @@ function Stop-DayZServer {
     if ($isDiagMode) {
         Stop-Process -Name "DayZDiag_x64" -Force -ErrorAction SilentlyContinue
     }
+    elseif ($isDisableBE) {
+        Stop-Process -Name "DayZServer_x64_NoBe" -Force -ErrorAction SilentlyContinue
+    }
     else {
         Stop-Process -Name "DayZServer_x64" -Force -ErrorAction SilentlyContinue
     }

@@ -13,26 +13,6 @@ if ($script:isFirstRun) {
     exit 0
 }
 
-# Определение имен исполняемых файлов в зависимости от режима
-$serverExeName = if ($isDiagMode) {
-    "DayZDiag_x64.exe"
-}
-elseif ($isDisableBE) {
-    "DayZServer_x64_NoBe.exe"
-}
-else {
-    "DayZServer_x64.exe"
-}
-$clientExeName = if ($isDiagMode) {
-    "DayZDiag_x64.exe"
-}
-elseif ($isDisableBE) {
-    "DayZ_x64.exe"
-}
-else {
-    "DayZ_BE.exe"
-}
-
 # Проверка наличия исполняемых файлов
 $serverExe = if ($isDiagMode) {
     "$gamePath\$serverExeName"
@@ -71,6 +51,11 @@ Write-ColorOutput "info.server_config" -ForegroundColor "Cyan"
 Write-ColorOutput "separator" -ForegroundColor "Cyan"
 Write-ConfigParam "info.server_preset" -Padding 16 $selectedServerPreset
 Write-ConfigParam "info.mod_preset" -Padding 16 $selectedModPreset
+
+if($isDisableBE) {
+    Write-ColorOutput "separator" -ForegroundColor "Cyan"
+    Write-ColorOutput "info.disable_be" -ForegroundColor "Yellow"
+}
 
 if ($isExperimental) {
     Write-ConfigParam "info.build_type" (Get-LocalizedString "info.experimental") "Yellow"

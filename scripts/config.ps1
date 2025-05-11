@@ -504,3 +504,23 @@ if ($isExperimental) {
 else {
     $clientLogsPath = "$env:LOCALAPPDATA\DayZ"
 }
+
+# Определение имен исполняемых файлов в зависимости от режима
+$serverExeName = if ($isDiagMode) {
+    "DayZDiag_x64.exe"
+}
+elseif ($isDisableBE) {
+    "DayZServer_x64_NoBe.exe"
+}
+else {
+    "DayZServer_x64.exe"
+}
+$clientExeName = if ($isDiagMode) {
+    "DayZDiag_x64.exe"
+}
+elseif ($isDisableBE) {
+    "DayZ_x64.exe"
+}
+else {
+    "DayZ_BE.exe"
+}
