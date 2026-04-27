@@ -74,6 +74,7 @@
       "clearing_logs": "Очистка логов...",
       "starting_server": "Запуск сервера на порту {0}",
       "starting_client": "Запуск клиента (127.0.0.1:{0})",
+      "starting_log_viewer": "Запуск мониторинга логов...",
       "launch_complete": "Скрипт завершен!",
       "press_any_key": "Нажмите любую клавишу для выхода...",
       "waiting_server": "Ожидание запуска сервера...",
@@ -92,6 +93,27 @@
       "complete": "Очистка логов завершена!",
       "server_running": "Сервер запущен, пропускаем очистку логов сервера",
       "client_running": "Клиент запущен, пропускаем очистку логов клиента"
+    },
+    "logviewer": {
+      "profile": "Профиль: {0}",
+      "client_profile": "Папка клиента: {0}",
+      "files": "Файлы:",
+      "server_logs": "Серверные логи:",
+      "client_logs": "Клиентские логи:",
+      "filter": "Фильтр: {0}",
+      "file_not_found": "Файл не найден (будет повтор): {0}",
+      "started_monitor": "Запущен мониторинг: {0}",
+      "no_files": "Нет файлов для мониторинга. Выход.",
+      "waiting_files": "Ожидание файлов по паттернам: {0}",
+      "monitoring": "Мониторинг {0} файл(ов). Закройте окно для остановки.",
+      "monitoring_server": "Мониторинг {0} серверных логов",
+      "monitoring_client": "Мониторинг {0} клиентских логов",
+      "new_file_detected": "Обнаружен новый файл, запущен мониторинг: {0}",
+      "file_appeared": "Файл появился, запущен мониторинг: {0}",
+      "stopping": "Остановка...",
+      "done": "Готово.",
+      "press_any_key": "Нажмите любую клавишу для выхода...",
+      "fatal_error": "КРИТИЧЕСКАЯ ОШИБКА: {0}"
     }
   },
   "en": {
@@ -169,6 +191,7 @@
       "clearing_logs": "Clearing logs...",
       "starting_server": "Starting server on port {0}",
       "starting_client": "Starting client (127.0.0.1:{0})",
+      "starting_log_viewer": "Starting log viewer...",
       "launch_complete": "Script complete!",
       "press_any_key": "Press any key to exit...",
       "waiting_server": "Waiting for server to start...",
@@ -187,6 +210,27 @@
       "complete": "Log cleaning complete!",
       "server_running": "Server is running, skipping server logs cleanup",
       "client_running": "Client is running, skipping client logs cleanup"
+    },
+    "logviewer": {
+      "profile": "Profile: {0}",
+      "client_profile": "Client folder: {0}",
+      "files": "Files:",
+      "server_logs": "Server logs:",
+      "client_logs": "Client logs:",
+      "filter": "Filter: {0}",
+      "file_not_found": "File not found (will retry): {0}",
+      "started_monitor": "Started monitor for: {0}",
+      "no_files": "No files to monitor. Exiting.",
+      "waiting_files": "Waiting for files matching patterns: {0}",
+      "monitoring": "Monitoring {0} file(s). Close window to stop.",
+      "monitoring_server": "Monitoring {0} server log(s)",
+      "monitoring_client": "Monitoring {0} client log(s)",
+      "new_file_detected": "New file detected, started monitor for: {0}",
+      "file_appeared": "File appeared, started monitor for: {0}",
+      "stopping": "Stopping...",
+      "done": "Done.",
+      "press_any_key": "Press any key to exit...",
+      "fatal_error": "FATAL ERROR: {0}"
     }
   }
 }

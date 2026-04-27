@@ -338,6 +338,20 @@ if (-not (Test-Path $configPath)) {
                     steam = $defaultWorkshopPath
                     local = "C:/PDrive"
                 }
+                logViewer = @{
+                    server = $true
+                    client = $true
+                    serverLogs = @(
+                        "p_rpt",
+                        "p_adm",
+                        "p_script",
+                        "p_console"
+                    )
+                    clientLogs = @(
+                        "p_all"
+                    )
+                    filter = @()
+                }
             }
 
             experimental = @{
@@ -356,6 +370,20 @@ if (-not (Test-Path $configPath)) {
                     steam = $defaultWorkshopPath
                     local = "C:/PDrive"
                 }
+                logViewer = @{
+                    server = $true
+                    client = $true
+                    serverLogs = @(
+                        "p_rpt",
+                        "p_adm",
+                        "p_script",
+                        "p_console"
+                    )
+                    clientLogs = @(
+                        "p_all"
+                    )
+                    filter = @()
+                }
             }
 
             myPreset1 = @{
@@ -373,6 +401,25 @@ if (-not (Test-Path $configPath)) {
                 workshop = @{
                     steam = $defaultWorkshopPath
                     local = "C:/PDrive"
+                }
+                logViewer = @{
+                    server = $true
+                    client = $true
+                    serverLogs = @(
+                        "p_rpt",
+                        "p_adm",
+                        "p_script",
+                        "p_console",
+                        "MyMod/Logs/myModLog.log"
+                    )
+                    clientLogs = @(
+                        "p_all",
+                        "error.log"
+                    )
+                    filter = @(
+                        "myMod*",
+                        "error"
+                    )
                 }
             }
         }
@@ -464,6 +511,10 @@ $isFilePatching = $serverPreset.isFilePatching
 $isDisableBE = $serverPreset.isDisableBE
 $isExperimental = $serverPreset.isExperimental
 $cleanLogsMode = $serverPreset.cleanLogs
+
+# Настройки мониторинга логов
+$logViewerConfig = $serverPreset.logViewer
+$logViewerEnabled = $logViewerConfig -and ($logViewerConfig.server -eq $true -or $logViewerConfig.client -eq $true)
 
 # Обработка путей к модам
 $steamWorkshopPath = $serverPreset.workshop.steam

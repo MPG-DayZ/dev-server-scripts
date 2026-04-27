@@ -1,17 +1,51 @@
-param ([Parameter(Mandatory = $false)]
+param (
+    [Parameter(Mandatory = $false)]
     [ValidateSet("server", "client", "all")]
     [string]$mode = "all",
 
+    [string]$serverPreset = "",
+
+    [string]$modPreset = "",
+
+    [int]$autoCloseTime = -1,
+
+    [string]$lang = "",
+
     [Parameter(Mandatory = $false)]
-    [switch]$silent = $false)
+    [switch]$silent = $false
+)
+
+$cmdServerPreset = $serverPreset
+$cmdAutoCloseTime = $autoCloseTime
+$cmdLang = $lang
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptDir = Split-Path -Parent $scriptPath
 . (Join-Path $scriptDir "config.ps1")
 
+if ($cmdServerPreset -ne "") {
+    if (-not $config.serverPresets.$cmdServerPreset) {
+        Write-ColorOutput "errors.preset_not_found" -ForegroundColor "Red" -Prefix "prefixes.error" -FormatArgs @("server", $cmdServerPreset)
+        Pause
+        exit 1
+    }
+    $selectedServerPreset = $cmdServerPreset
+}
+
+$serverPresetObj = $config.serverPresets.$selectedServerPreset
+$isDiagMode = $serverPresetObj.isDiagMode
+$isDisableBE = $serverPresetObj.isDisableBE
+
+if ($cmdAutoCloseTime -ge 0) {
+    $autoCloseTime = $cmdAutoCloseTime
+}
+
+if ($cmdLang -ne "") {
+    Set-CurrentLanguage $cmdLang
+}
+
 $host.UI.RawUI.WindowTitle = Get-LocalizedString "window_title"
 
-# Функция для остановки сервера
 function Stop-DayZServer {
     Write-ColorOutput "info.stopping_server" -ForegroundColor "Yellow" -Prefix "prefixes.server"
     if ($isDiagMode) {
@@ -25,7 +59,6 @@ function Stop-DayZServer {
     }
 }
 
-# Функция для остановки клиента
 function Stop-DayZClient {
     Write-ColorOutput "info.stopping_client" -ForegroundColor "Yellow" -Prefix "prefixes.client"
     if ($isDiagMode) {
@@ -48,6 +81,8 @@ switch ($mode) {
         Stop-DayZClient
     }
 }
+
+taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer*" 2>$null | Out-Null
 
 if (!$silent) {
     Write-ColorOutput "info.launch_complete" -ForegroundColor "Green" -Prefix "prefixes.system"
