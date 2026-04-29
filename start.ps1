@@ -63,6 +63,10 @@ if ($help) {
 $cmdModPreset = $modPreset
 $cmdServerPreset = $serverPreset
 
+# Удаляем типизированные (string) param-переменные, чтобы config.ps1 мог переиспользовать
+# имена $modPreset / $serverPreset для хранения объектов пресетов без принуждения к ToString()
+Remove-Variable -Name modPreset, serverPreset -Scope Script -ErrorAction SilentlyContinue
+
 . "$PSScriptRoot\scripts\config.ps1"
 
 # Переопределение значений из параметров командной строки
