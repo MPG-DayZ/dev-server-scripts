@@ -319,6 +319,7 @@ if (-not (Test-Path $configPath)) {
             modPreset = "vanilla"
             autoCloseTime = 20
             lang = "auto"
+            interactive = $false
         }
 
         serverPresets = @{
@@ -473,6 +474,7 @@ $config = Get-Content -Path $configPath -Raw | ConvertFrom-Json
 $selectedServerPreset = $config.active.serverPreset
 $selectedModPreset = $config.active.modPreset
 $autoCloseTime = $config.active.autoCloseTime
+$interactiveEnabled = $config.active.PSObject.Properties.Name -contains "interactive" -and $config.active.interactive -eq $true
 
 # Устанавливаем язык по умолчанию из системы
 Set-CurrentLanguage $config.active.lang

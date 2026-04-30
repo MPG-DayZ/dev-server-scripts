@@ -54,7 +54,17 @@
       "executable_not_found": "Не найден исполняемый файл {0}: {1}",
       "mission_path_required": "Для диагностического режима необходимо указать путь к папке миссии (missionPath)!",
       "mission_path_not_found": "Не найдена папка миссии: {0}",
-      "server_start_timeout": "Превышено время ожидания запуска сервера!"
+      "server_start_timeout": "Превышено время ожидания запуска сервера!",
+      "no_presets": "Нет доступных пресетов типа {0}",
+      "cache_write_failed": "Не удалось сохранить кэш: {0}"
+    },
+    "interactive": {
+      "title_mod": "Выберите пресет модов:",
+      "title_server": "Выберите серверный пресет:",
+      "hint": "↑/↓ — навигация, Enter — выбор, Esc — отмена",
+      "default_marker": " (по умолчанию)",
+      "selected": "Выбрано: {0}",
+      "cancelled": "Отменено пользователем"
     },
     "info": {
       "server_config": "КОНФИГУРАЦИЯ DAYZ СЕРВЕРА",
@@ -171,7 +181,17 @@
       "executable_not_found": "{0} executable not found: {1}",
       "mission_path_required": "Mission path (missionPath) is required for diagnostic mode!",
       "mission_path_not_found": "Mission path not found: {0}",
-      "server_start_timeout": "Server start timeout exceeded!"
+      "server_start_timeout": "Server start timeout exceeded!",
+      "no_presets": "No available presets of type {0}",
+      "cache_write_failed": "Failed to save cache: {0}"
+    },
+    "interactive": {
+      "title_mod": "Select mod preset:",
+      "title_server": "Select server preset:",
+      "hint": "↑/↓ — navigate, Enter — select, Esc — cancel",
+      "default_marker": " (default)",
+      "selected": "Selected: {0}",
+      "cancelled": "Cancelled by user"
     },
     "info": {
       "server_config": "DAYZ SERVER CONFIGURATION",

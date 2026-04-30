@@ -69,6 +69,29 @@ Remove-Variable -Name modPreset, serverPreset -Scope Script -ErrorAction Silentl
 
 . "$PSScriptRoot\scripts\config.ps1"
 
+# === Интерактивный выбор пресетов ===
+$interactiveEnabled = $config.active.PSObject.Properties.Name -contains "interactive" `
+    -and $config.active.interactive -eq $true
+$noCliPresets = ($cmdModPreset -eq "") -and ($cmdServerPreset -eq "")
+
+if ($interactiveEnabled -and $noCliPresets) {
+    . "$PSScriptRoot\scripts\interactive.ps1"
+    $picked = Invoke-InteractivePresetSelection `
+        -Config $config `
+        -DefaultModPreset $selectedModPreset `
+        -DefaultServerPreset $selectedServerPreset
+
+    if ($null -ne $picked) {
+        $cmdModPreset    = $picked.ModPreset
+        $cmdServerPreset = $picked.ServerPreset
+        Save-InteractiveCache -ModPreset $picked.ModPreset -ServerPreset $picked.ServerPreset
+    }
+    else {
+        exit 0
+    }
+}
+# === /Интерактивный выбор пресетов ===
+
 # Переопределение значений из параметров командной строки
 if ($cmdModPreset -ne "") {
     $selectedModPreset = $cmdModPreset

@@ -162,3 +162,39 @@
 > [!IMPORTANT]
 > Секцию `logViewer` нужно добавить в **каждый** пресет в `serverPresets`, который вы используете.
 > Если секция отсутствует — logviewer просто не запустится, ошибок не будет.
+
+---
+
+## Добавление поля `interactive` в секцию `active`
+
+Для включения интерактивного режима выбора пресетов необходимо добавить поле `interactive` в секцию `active` файла `config.json`.
+
+### Вариант: включение интерактивного режима
+
+```json
+"active": {
+    "modPreset": "vanilla",
+    "serverPreset": "release",
+    "autoCloseTime": 0,
+    "lang": "auto",
+    "interactive": true
+}
+```
+
+### Вариант: отключение (по умолчанию)
+
+Если поле `interactive` отсутствует или равно `false`, интерактивный режим не активируется — используются пресеты из `modPreset` и `serverPreset`:
+
+```json
+"active": {
+    "modPreset": "vanilla",
+    "serverPreset": "release",
+    "autoCloseTime": 0,
+    "lang": "auto"
+}
+```
+
+> [!NOTE]
+> Интерактивный режим срабатывает только при запуске `start.ps1` без параметров `-modPreset` и `-serverPreset`.
+> Передача этих параметров через командную строку всегда имеет приоритет.
+> Выбранные в интерактивном режиме пресеты кэшируются в `.cache/interactive.json`.
