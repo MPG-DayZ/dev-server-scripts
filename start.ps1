@@ -320,7 +320,7 @@ if ((Test-Path $serverPath) -and (($startType -eq "all" -or $startType -eq "serv
     #    Write-ColorOutput (Normalize-Path $serverExe)
     #    Write-ColorOutput (Normalize-Path $serverArgs)
 
-    Start-Process -FilePath (Normalize-Path $serverExe) -ArgumentList (Normalize-Path $serverArgs)
+    Start-Process -WorkingDirectory (Normalize-Path $serverPath) -FilePath (Normalize-Path $serverExe) -ArgumentList (Normalize-Path $serverArgs)
 }
 
 # Запуск клиента
@@ -347,7 +347,7 @@ if ((Test-Path $gamePath) -and (($startType -eq "all" -or $startType -eq "client
     #    Write-ColorOutput (Normalize-Path $clientExe)
     #    Write-ColorOutput (Normalize-Path $clientArgs)
 
-    Start-Process -FilePath (Normalize-Path $clientExe) -ArgumentList (Normalize-Path $clientArgs)
+    Start-Process -WorkingDirectory (Normalize-Path $gamePath) -FilePath (Normalize-Path $clientExe) -ArgumentList (Normalize-Path $clientArgs)
     Pop-Location
 }
 
