@@ -34,10 +34,20 @@ trap {
     exit 1
 }
 
-$host.UI.RawUI.WindowTitle = "DayZ Log Viewer"
+# Извлечение версии из config.ps1
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$configContent = Get-Content (Join-Path $scriptDir "config.ps1") -Raw
+$ScriptVersion = "unknown"
+foreach ($line in ($configContent -split "`n")) {
+    if ($line.Trim() -match '^\$ScriptVersion\s*=\s*["''](.+?)["'']') {
+        $ScriptVersion = $Matches[1]
+        break
+    }
+}
+
+$host.UI.RawUI.WindowTitle = "DayZ Log Viewer v$ScriptVersion"
 
 # Загрузка локализации
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $localesPath = Join-Path $scriptDir "locales.json"
 $locales = Get-Content $localesPath -Raw -Encoding UTF8 | ConvertFrom-Json
 

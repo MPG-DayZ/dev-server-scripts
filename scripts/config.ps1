@@ -1,3 +1,6 @@
+# Версия скриптов
+$ScriptVersion = "1.4.0"
+
 # Загрузка локали
 $localesPath = Join-Path $PSScriptRoot "locales.json"
 $script:locales = Get-Content -Path $localesPath -Raw | ConvertFrom-Json
@@ -267,7 +270,7 @@ if (-not (Test-Path $configPath)) {
     $script:isFirstRun = $true
     Set-CurrentLanguage
 
-    $host.UI.RawUI.WindowTitle = Get-LocalizedString "window_title_first_run"
+    $host.UI.RawUI.WindowTitle = "$(Get-LocalizedString "window_title_first_run") v$ScriptVersion"
 
     Write-ColorOutput "first_run.title" -ForegroundColor "Yellow"
     Write-ColorOutput "first_run.searching" -ForegroundColor "White"

@@ -192,7 +192,7 @@ if ($lang -ne "") {
     Set-CurrentLanguage $lang
 }
 
-$host.UI.RawUI.WindowTitle = Get-LocalizedString "window_title"
+$host.UI.RawUI.WindowTitle = "$(Get-LocalizedString "window_title") v$ScriptVersion"
 
 # Проверка на первый запуск
 if ($script:isFirstRun) {
@@ -275,7 +275,7 @@ if ($shouldClearLogs) {
 
 # Запуск сервера
 # Убиваем предыдущий процесс logviewer, если он запущен
-taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer*" 2>$null | Out-Null
+taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer v*" 2>$null | Out-Null
 
 if ((Test-Path $serverPath) -and (($startType -eq "all" -or $startType -eq "server") -or -not $startType)) {
     if ($mod) {
@@ -382,7 +382,7 @@ if ($logViewerEnabled -and ($hasServerLogs -or $hasClientLogs)) {
 if ($autoCloseTime -gt 0) {
     1..$autoCloseTime | ForEach-Object {
         $timeLeft = $autoCloseTime - $_ + 1
-        $host.UI.RawUI.WindowTitle = Get-LocalizedString "window_title_closing" -FormatArgs @($timeLeft)
+        $host.UI.RawUI.WindowTitle = "$(Get-LocalizedString "window_title_closing" -FormatArgs @($timeLeft)) v$ScriptVersion"
         Start-Sleep -Seconds 1
     }
 }

@@ -44,7 +44,7 @@ if ($cmdLang -ne "") {
     Set-CurrentLanguage $cmdLang
 }
 
-$host.UI.RawUI.WindowTitle = Get-LocalizedString "window_title"
+$host.UI.RawUI.WindowTitle = "$(Get-LocalizedString "window_title") v$ScriptVersion"
 
 function Stop-DayZServer {
     Write-ColorOutput "info.stopping_server" -ForegroundColor "Yellow" -Prefix "prefixes.server"
@@ -82,7 +82,7 @@ switch ($mode) {
     }
 }
 
-taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer*" 2>$null | Out-Null
+taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer v*" 2>$null | Out-Null
 
 if (!$silent) {
     Write-ColorOutput "info.launch_complete" -ForegroundColor "Green" -Prefix "prefixes.system"
@@ -90,7 +90,7 @@ if (!$silent) {
     if ($autoCloseTime -gt 0) {
         1..$autoCloseTime | ForEach-Object {
             $timeLeft = $autoCloseTime - $_ + 1
-            $host.UI.RawUI.WindowTitle = Get-LocalizedString "window_title_closing" -FormatArgs @($timeLeft)
+            $host.UI.RawUI.WindowTitle = "$(Get-LocalizedString "window_title_closing" -FormatArgs @($timeLeft)) v$ScriptVersion"
             Start-Sleep -Seconds 1
         }
     }

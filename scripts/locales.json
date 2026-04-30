@@ -61,10 +61,14 @@
     "interactive": {
       "title_mod": "Выберите пресет модов:",
       "title_server": "Выберите серверный пресет:",
-      "hint": "↑/↓ — навигация, Enter — выбор, Esc — отмена",
+      "hint": "↑/↓ — навигация, Enter — выбор, Esc — отмена, V — версия",
       "default_marker": " (по умолчанию)",
       "selected": "Выбрано: {0}",
       "cancelled": "Отменено пользователем"
+    },
+    "version": {
+      "title": "Информация о версии",
+      "scripts_version": "Версия скриптов"
     },
     "info": {
       "server_config": "КОНФИГУРАЦИЯ DAYZ СЕРВЕРА",
@@ -188,10 +192,14 @@
     "interactive": {
       "title_mod": "Select mod preset:",
       "title_server": "Select server preset:",
-      "hint": "↑/↓ — navigate, Enter — select, Esc — cancel",
+      "hint": "↑/↓ — navigate, Enter — select, Esc — cancel, V — version",
       "default_marker": " (default)",
       "selected": "Selected: {0}",
       "cancelled": "Cancelled by user"
+    },
+    "version": {
+      "title": "Version Info",
+      "scripts_version": "Scripts Version"
     },
     "info": {
       "server_config": "DAYZ SERVER CONFIGURATION",

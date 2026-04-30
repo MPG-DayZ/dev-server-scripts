@@ -158,6 +158,36 @@ function Show-PresetMenu {
                     Write-Host (Get-LocalizedString "interactive.cancelled") -ForegroundColor Yellow
                     return $null
                 }
+                'V' {
+                    # Показать версию
+                    $versionTitle = Get-LocalizedString "version.title"
+                    $versionLabel = Get-LocalizedString "version.scripts_version"
+                    [Console]::SetCursorPosition(0, $topRow)
+                    for ($i = 0; $i -le ($Items.Count + 3); $i++) {
+                        Write-Host (" " * [Console]::WindowWidth)
+                    }
+                    [Console]::SetCursorPosition(0, $topRow)
+
+                    Write-Host "$versionTitle" -ForegroundColor Cyan
+                    Write-Host "$versionLabel`: $ScriptVersion" -ForegroundColor Green
+                    Write-Host ""
+                    Write-Host (Get-LocalizedString "interactive.hint") -ForegroundColor DarkGray
+
+                    for ($i = 0; $i -lt $Items.Count; $i++) {
+                        $marker = ""
+                        if ($i -eq $DefaultIndex) {
+                            $marker = $defaultMarker
+                        }
+
+                        if ($i -eq $selectedIndex) {
+                            Write-Host "  > " -ForegroundColor Cyan -NoNewline
+                            Write-Host "$($Items[$i])$marker" -ForegroundColor Cyan
+                        }
+                        else {
+                            Write-Host "    $($Items[$i])$marker" -ForegroundColor Gray
+                        }
+                    }
+                }
                 default {
                     # Ctrl+C — отмена, аналогично Escape
                     if ($key.Modifiers -band [ConsoleModifiers]::Control -and $key.Key -eq 'C') {
