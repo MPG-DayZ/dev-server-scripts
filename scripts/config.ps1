@@ -1,9 +1,14 @@
 # Версия скриптов
-$ScriptVersion = "1.4.1"
+$ScriptVersion = "1.4.2"
 
 # Загрузка локали
 $localesPath = Join-Path $PSScriptRoot "locales.json"
-$script:locales = Get-Content -Path $localesPath -Raw | ConvertFrom-Json
+try {
+    $script:locales = Get-Content -Path $localesPath -Raw -Encoding UTF8 | ConvertFrom-Json
+} catch {
+    Write-Host "Localisaion loading error: $_" -ForegroundColor Red
+    $script:locales = @{ en = @{}; ru = @{} }
+}
 
 # Функция для определения языка системы
 function Get-SystemLanguage {
@@ -193,7 +198,7 @@ function Format-Path {
 }
 
 
-function Normalize-Path {
+function ConvertTo-WindowsPath {
     param ([string]$path)
 
     if (-not $path) {

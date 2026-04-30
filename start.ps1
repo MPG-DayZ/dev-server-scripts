@@ -63,11 +63,13 @@ if ($help) {
 $cmdModPreset = $modPreset
 $cmdServerPreset = $serverPreset
 
-# Удаляем типизированные (string) param-переменные, чтобы config.ps1 мог переиспользовать
-# имена $modPreset / $serverPreset для хранения объектов пресетов без принуждения к ToString()
+# Обход типизации [string] в param() — config.ps1 присваивает объекты пресетов
 Remove-Variable -Name modPreset, serverPreset -Scope Script -ErrorAction SilentlyContinue
 
 . "$PSScriptRoot\scripts\config.ps1"
+
+# Задержка перед запуском logviewer (секунды)
+$logViewerDelay = 5
 
 # === Интерактивный выбор пресетов ===
 $interactiveEnabled = $config.active.PSObject.Properties.Name -contains "interactive" `
@@ -132,6 +134,9 @@ if (-not $config.serverPresets.$selectedServerPreset) {
     exit 1
 }
 
+# TODO Вынести извлечение переменных из пресета в общую функцию в config.ps1
+# ADR: DRY-пресет
+# Дублирование логики из config.ps1 — при добавлении полей обновлять в двух местах
 # Извлечение всех зависимых переменных из пресета (ВСЕГДА, а не только при явном указании -serverPreset)
 $serverPresetObj = $config.serverPresets.$selectedServerPreset
 
@@ -275,13 +280,13 @@ if ($shouldClearLogs) {
 
 # Запуск сервера
 # Убиваем предыдущий процесс logviewer, если он запущен
-taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer v*" 2>$null | Out-Null
+taskkill /F /FI "WINDOWTITLE eq MPG Log Viewer v$ScriptVersion" 2>$null | Out-Null
 
 if ((Test-Path $serverPath) -and (($startType -eq "all" -or $startType -eq "server") -or -not $startType)) {
     if ($mod) {
         Write-ColorOutput "info.client_mods" -ForegroundColor "Cyan" -Prefix "prefixes.system"
         $clientMods | ForEach-Object {
-            Write-ColorOutput "info.list_item" -ForegroundColor "White" -Prefix "prefixes.system" -FormatArgs @((Normalize-Path $_))
+            Write-ColorOutput "info.list_item" -ForegroundColor "White" -Prefix "prefixes.system" -FormatArgs @((ConvertTo-WindowsPath $_))
         }
         Write-Host ""
     }
@@ -289,7 +294,7 @@ if ((Test-Path $serverPath) -and (($startType -eq "all" -or $startType -eq "serv
     if ($serverMod) {
         Write-ColorOutput "info.server_mods" -ForegroundColor "Cyan" -Prefix "prefixes.system"
         $serverMods | ForEach-Object {
-            Write-ColorOutput "info.list_item" -ForegroundColor "White" -Prefix "prefixes.system" -FormatArgs @((Normalize-Path $_))
+            Write-ColorOutput "info.list_item" -ForegroundColor "White" -Prefix "prefixes.system" -FormatArgs @((ConvertTo-WindowsPath $_))
         }
         Write-Host ""
     }
@@ -317,10 +322,10 @@ if ((Test-Path $serverPath) -and (($startType -eq "all" -or $startType -eq "serv
         $serverArgs += "-filePatching"
     }
 
-    #    Write-ColorOutput (Normalize-Path $serverExe)
-    #    Write-ColorOutput (Normalize-Path $serverArgs)
+    #    Write-ColorOutput (ConvertTo-WindowsPath $serverExe)
+    #    Write-ColorOutput (ConvertTo-WindowsPath $serverArgs)
 
-    Start-Process -FilePath (Normalize-Path $serverExe) -ArgumentList (Normalize-Path $serverArgs)
+    Start-Process -FilePath (ConvertTo-WindowsPath $serverExe) -ArgumentList $serverArgs
 }
 
 # Запуск клиента
@@ -344,10 +349,10 @@ if ((Test-Path $gamePath) -and (($startType -eq "all" -or $startType -eq "client
         $clientArgs += "-filePatching"
     }
 
-    #    Write-ColorOutput (Normalize-Path $clientExe)
-    #    Write-ColorOutput (Normalize-Path $clientArgs)
+    #    Write-ColorOutput (ConvertTo-WindowsPath $clientExe)
+    #    Write-ColorOutput (ConvertTo-WindowsPath $clientArgs)
 
-    Start-Process -FilePath (Normalize-Path $clientExe) -ArgumentList (Normalize-Path $clientArgs)
+    Start-Process -FilePath (ConvertTo-WindowsPath $clientExe) -ArgumentList (ConvertTo-WindowsPath $clientArgs)
     Pop-Location
 }
 
@@ -358,7 +363,7 @@ $hasServerLogs = $logViewerConfig -and $logViewerConfig.server -and $logViewerCo
 $hasClientLogs = $logViewerConfig -and $logViewerConfig.client -and $logViewerConfig.clientLogs -and $logViewerConfig.clientLogs.Count -gt 0
 
 if ($logViewerEnabled -and ($hasServerLogs -or $hasClientLogs)) {
-    Start-Sleep -Seconds 5
+    Start-Sleep -Seconds $logViewerDelay
     Write-ColorOutput "info.starting_log_viewer" -ForegroundColor "Cyan" -Prefix "prefixes.system"
 
     $serverLogsStr = if ($hasServerLogs) {

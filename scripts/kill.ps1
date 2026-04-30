@@ -49,6 +49,8 @@ $host.UI.RawUI.WindowTitle = "$(Get-LocalizedString "window_title") v$ScriptVers
 function Stop-DayZServer {
     Write-ColorOutput "info.stopping_server" -ForegroundColor "Yellow" -Prefix "prefixes.server"
     if ($isDiagMode) {
+        # В diag-режиме сервер и клиент используют один exe (DayZDiag_x64)
+        # Убиваем все экземпляры — клиента тоже, т.к. различить по имени нельзя
         Stop-Process -Name "DayZDiag_x64" -Force -ErrorAction SilentlyContinue
     }
     elseif ($isDisableBE) {
@@ -62,7 +64,8 @@ function Stop-DayZServer {
 function Stop-DayZClient {
     Write-ColorOutput "info.stopping_client" -ForegroundColor "Yellow" -Prefix "prefixes.client"
     if ($isDiagMode) {
-        Stop-Process -Name "DayZDiag_x64" -Force -ErrorAction SilentlyContinue
+        # В diag-режиме клиент уже убит вместе с сервером в Stop-DayZServer
+        return
     }
     else {
         Stop-Process -Name "DayZ_x64" -Force -ErrorAction SilentlyContinue
@@ -82,7 +85,7 @@ switch ($mode) {
     }
 }
 
-taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer v$ScriptVersion" 2>$null | Out-Null
+taskkill /F /FI "WINDOWTITLE eq MPG Log Viewer v$ScriptVersion" 2>$null | Out-Null
 
 if (!$silent) {
     Write-ColorOutput "info.launch_complete" -ForegroundColor "Green" -Prefix "prefixes.system"

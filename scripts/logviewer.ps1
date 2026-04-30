@@ -26,10 +26,16 @@ param (
 # Обработка ошибок на уровне скрипта
 $ErrorActionPreference = "Continue"
 trap {
-    $msg = $script:Loc.logviewer.fatal_error -f $_
-    Write-Host "[logviewer] $msg" -ForegroundColor Red
+    if ($script:Loc) {
+        $msg = $script:Loc.logviewer.fatal_error -f $_
+        Write-Host "[logviewer] $msg" -ForegroundColor Red
+    } else {
+        Write-Host "[logviewer] FATAL ERROR: $_" -ForegroundColor Red
+    }
     Write-Host $_.ScriptStackTrace -ForegroundColor DarkGray
-    Write-Host "`n$($script:Loc.logviewer.press_any_key)" -ForegroundColor Yellow
+    if ($script:Loc) {
+        Write-Host "`n$($script:Loc.logviewer.press_any_key)" -ForegroundColor Yellow
+    }
     if ($autoCloseTime -lt 0) {
         $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     } elseif ($autoCloseTime -gt 0) {
@@ -40,7 +46,7 @@ trap {
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $displayVersion = if ($Version) { $Version } else { "unknown" }
-$host.UI.RawUI.WindowTitle = "DayZ Log Viewer v$displayVersion"
+$host.UI.RawUI.WindowTitle = "MPG Log Viewer v$displayVersion"
 
 # Загрузка локализации
 $localesPath = Join-Path $scriptDir "locales.json"
@@ -54,6 +60,7 @@ if ($locales.PSObject.Properties.Name -contains $effectiveLang) {
     $script:Loc = $locales.en
 }
 
+# logviewer может запускаться автономно, поэтому имеет собственную систему локализации
 function Get-T {
     param([string]$Key)
     $obj = $script:Loc
@@ -211,7 +218,7 @@ if (-not [string]::IsNullOrEmpty($LogPreset)) {
             }
             
             # Клиентские логи
-            if (-not [string]::IsNullOrEmpty($ClientLogs)) {
+            if (-not [string]::IsNullOrEmpty($ClientLogs) -and -not [string]::IsNullOrEmpty($ClientLogsPath)) {
                 $found = Get-ChildItem -Path $ClientLogsPath -Filter $pat -File -ErrorAction SilentlyContinue
                 if ($found) {
                     foreach ($match in $found) {
@@ -236,8 +243,6 @@ $logFilesArray = $script:rawFiles
 $useFilter = -not [string]::IsNullOrEmpty($Filter)
 $filterPattern = if ($useFilter) { $Filter } else { $null }
 $pendingFiles = @()
-$wildcardPatterns = @()
-
 # Вычисление максимальной ширины префикса
 $maxPrefixLength = 0
 foreach ($prefix in $script:filePrefixMap.Values) {
@@ -319,7 +324,7 @@ foreach ($logFile in $logFilesArray) {
     Write-Host "[logviewer] $(Format-T 'logviewer.started_monitor' (,$logName))" -ForegroundColor Green
 }
 
-if ($fileStates.Count -eq 0 -and $wildcardPatterns.Count -eq 0) {
+if ($fileStates.Count -eq 0) {
     Write-Host "[logviewer] $(Get-T 'logviewer.no_files')" -ForegroundColor Red
     Write-Host "`n$(Get-T 'logviewer.press_any_key')" -ForegroundColor Yellow
     if ($autoCloseTime -lt 0) {
@@ -328,10 +333,6 @@ if ($fileStates.Count -eq 0 -and $wildcardPatterns.Count -eq 0) {
         Start-Sleep -Seconds $autoCloseTime
     }
     exit 1
-}
-
-if ($fileStates.Count -eq 0) {
-    Write-Host "[logviewer] $(Format-T 'logviewer.waiting_files' (,($wildcardPatterns -join ', ')))" -ForegroundColor DarkYellow
 }
 
 Write-Host "`n[logviewer] $(Format-T 'logviewer.monitoring' (,$fileStates.Count))" -ForegroundColor Cyan
@@ -348,32 +349,10 @@ $wildcardCheckCounter = 0
 try {
     while ($true) {
         # Проверяем появление новых файлов по wildcard-паттернам и pending-файлам
-        if ($wildcardPatterns.Count -gt 0 -or $pendingFiles.Count -gt 0) {
+        if ($pendingFiles.Count -gt 0) {
             $wildcardCheckCounter++
             if ($wildcardCheckCounter -ge 25) {
                 $wildcardCheckCounter = 0
-
-                # Проверяем wildcard-паттерны
-                foreach ($pattern in $wildcardPatterns) {
-                    $found = Get-ChildItem -Path $ProfilePath -Filter $pattern -File -ErrorAction SilentlyContinue
-                    if ($found) {
-                        foreach ($match in $found) {
-                            $newFilePath = $match.FullName
-                            if (-not $trackedFiles.ContainsKey($newFilePath)) {
-                                $trackedFiles[$newFilePath] = $true
-                                $newLogName = Get-PrefixForFile $newFilePath
-
-                                $stream = [System.IO.File]::Open($newFilePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
-                                $fileStates[$newFilePath] = @{
-                                    Reader = New-Object System.IO.StreamReader($stream)
-                                    LastPosition = 0
-                                    LogName = $newLogName
-                                }
-                                Write-Host "`n[logviewer] $(Format-T 'logviewer.new_file_detected' (,$newLogName))" -ForegroundColor Green
-                            }
-                        }
-                    }
-                }
 
                 # Проверяем pending-файлы (обычные файлы, не найденные при старте)
                 $stillPending = @()

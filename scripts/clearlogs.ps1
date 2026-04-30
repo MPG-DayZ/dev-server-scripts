@@ -14,7 +14,11 @@ function Test-ProcessRunning {
 
 # Очистка логов сервера
 if ($clearLogsServer) {
-    if (Test-ProcessRunning "DayZServer_x64" -RetryCount 2 -RetryDelay 1) {
+    $serverProcessName = if ($isDiagMode) { "DayZDiag_x64" }
+        elseif ($isDisableBE) { "DayZServer_x64_NoBe" }
+        else { "DayZServer_x64" }
+
+    if (Test-ProcessRunning $serverProcessName -RetryCount 2 -RetryDelay 1) {
         Write-ColorOutput "logs.server_running" -ForegroundColor "Yellow" -Prefix "prefixes.logs"
     }
     else {
@@ -47,7 +51,9 @@ if ($clearLogsServer) {
 
 # Очистка логов клиента
 if ($clearLogsClient) {
-    if (Test-ProcessRunning "DayZ_x64" -RetryCount 2 -RetryDelay 1) {
+    $clientProcessName = if ($isDiagMode) { "DayZDiag_x64" } else { "DayZ_x64" }
+
+    if (Test-ProcessRunning $clientProcessName -RetryCount 2 -RetryDelay 1) {
         Write-ColorOutput "logs.client_running" -ForegroundColor "Yellow" -Prefix "prefixes.logs"
     }
     else {
