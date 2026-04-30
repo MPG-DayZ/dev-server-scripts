@@ -374,7 +374,7 @@ if ($logViewerEnabled -and ($hasServerLogs -or $hasClientLogs)) {
     } else { "" }
 
     $logViewerScript = Join-Path $PSScriptRoot "scripts\logviewer.ps1"
-    $logViewerArgs = "-ProfilePath `"$profilePath`" -ServerLogs `"$serverLogsStr`" -ClientLogs `"$clientLogsStr`" -Filter `"$filterStr`" -Lang `"$script:currentLocale`" -AutoCloseTime $autoCloseTime"
+    $logViewerArgs = "-ProfilePath `"$profilePath`" -ServerLogs `"$serverLogsStr`" -ClientLogs `"$clientLogsStr`" -Filter `"$filterStr`" -Lang `"$script:currentLocale`" -AutoCloseTime $autoCloseTime -Version `"$ScriptVersion`" -ClientLogsPath `"$clientLogsPath`""
 
     Start-Process -FilePath "pwsh.exe" -ArgumentList "-NoLogo -ExecutionPolicy Bypass -File `"$logViewerScript`" $logViewerArgs" -WindowStyle Normal
 }

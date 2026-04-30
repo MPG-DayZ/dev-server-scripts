@@ -82,7 +82,7 @@ switch ($mode) {
     }
 }
 
-taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer v*" 2>$null | Out-Null
+taskkill /F /FI "WINDOWTITLE eq DayZ Log Viewer v$ScriptVersion" 2>$null | Out-Null
 
 if (!$silent) {
     Write-ColorOutput "info.launch_complete" -ForegroundColor "Green" -Prefix "prefixes.system"

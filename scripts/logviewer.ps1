@@ -16,7 +16,11 @@ param (
 
     [string]$lang = "",
 
-    [int]$autoCloseTime = -1
+    [int]$autoCloseTime = -1,
+
+    [string]$Version = "",
+
+    [string]$ClientLogsPath = ""
 )
 
 # Обработка ошибок на уровне скрипта
@@ -34,18 +38,9 @@ trap {
     exit 1
 }
 
-# Извлечение версии из config.ps1
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$configContent = Get-Content (Join-Path $scriptDir "config.ps1") -Raw
-$ScriptVersion = "unknown"
-foreach ($line in ($configContent -split "`n")) {
-    if ($line.Trim() -match '^\$ScriptVersion\s*=\s*["''](.+?)["'']') {
-        $ScriptVersion = $Matches[1]
-        break
-    }
-}
-
-$host.UI.RawUI.WindowTitle = "DayZ Log Viewer v$ScriptVersion"
+$displayVersion = if ($Version) { $Version } else { "unknown" }
+$host.UI.RawUI.WindowTitle = "DayZ Log Viewer v$displayVersion"
 
 # Загрузка локализации
 $localesPath = Join-Path $scriptDir "locales.json"
@@ -81,14 +76,6 @@ function Format-T {
     return $template
 }
 
-# Определение пути к клиентским логам
-$gamePath = $env:LOCALAPPDATA
-$dayzExe = Get-Process -Name "DayZ_x64" -ErrorAction SilentlyContinue
-if ($dayzExe) {
-    $clientLogsPath = Join-Path $gamePath "DayZ Exp"
-} else {
-    $clientLogsPath = Join-Path $gamePath "DayZ"
-}
 
 # Пресеты логов
 $LogPresets = @{
@@ -225,7 +212,7 @@ if (-not [string]::IsNullOrEmpty($LogPreset)) {
             
             # Клиентские логи
             if (-not [string]::IsNullOrEmpty($ClientLogs)) {
-                $found = Get-ChildItem -Path $clientLogsPath -Filter $pat -File -ErrorAction SilentlyContinue
+                $found = Get-ChildItem -Path $ClientLogsPath -Filter $pat -File -ErrorAction SilentlyContinue
                 if ($found) {
                     foreach ($match in $found) {
                         $fullPath = $match.FullName
@@ -243,7 +230,7 @@ if (-not [string]::IsNullOrEmpty($LogPreset)) {
 
 # Обработка списков файлов с раскрытием пресетов внутри
 Expand-PresetsInList -FileList $ServerLogs -SearchPath $ProfilePath -FileType "server"
-Expand-PresetsInList -FileList $ClientLogs -SearchPath $clientLogsPath -FileType "client"
+Expand-PresetsInList -FileList $ClientLogs -SearchPath $ClientLogsPath -FileType "client"
 
 $logFilesArray = $script:rawFiles
 $useFilter = -not [string]::IsNullOrEmpty($Filter)
@@ -288,7 +275,7 @@ function Get-LogTypePrefix {
 
 Write-Host "[logviewer] $(Format-T 'logviewer.profile' (,$ProfilePath))" -ForegroundColor Cyan
 if (-not [string]::IsNullOrEmpty($ClientLogs)) {
-    Write-Host "[logviewer] $(Format-T 'logviewer.client_profile' (,$clientLogsPath))" -ForegroundColor Cyan
+    Write-Host "[logviewer] $(Format-T 'logviewer.client_profile' (,$ClientLogsPath))" -ForegroundColor Cyan
 }
 Write-Host "[logviewer] $(Get-T 'logviewer.files')" -ForegroundColor Cyan
 foreach ($f in $logFilesArray) {
