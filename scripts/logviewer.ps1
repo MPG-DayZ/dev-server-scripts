@@ -291,13 +291,30 @@ if ($useFilter) {
     Write-Host "[logviewer] $(Format-T 'logviewer.filter' (,$Filter))" -ForegroundColor Cyan
 }
 
+$script:ansiReset = "`e[0m"
+
 function Get-ColorForLine {
     param([string]$Line)
 
-    if ($Line -match "ERROR|Script ERROR") { return "Red" }
-    if ($Line -match "WARNING|Script WARNING") { return "Yellow" }
-    if ($Line -match "INFO|Script INFO") { return "Green" }
-    return "White"
+    if ($Line -match "FATAL") {
+        return @{ Color = $null; AnsiPrefix = "`e[4;31m"; AnsiSuffix = $script:ansiReset }
+    }
+    if ($Line -match "ERROR|Script ERROR") {
+        return @{ Color = "Red"; AnsiPrefix = $null; AnsiSuffix = $null }
+    }
+    if ($Line -match "WARN(ING)?|Script WARN(ING)?") {
+        return @{ Color = "Yellow"; AnsiPrefix = $null; AnsiSuffix = $null }
+    }
+    if ($Line -match "INFO|Script INFO") {
+        return @{ Color = "Green"; AnsiPrefix = $null; AnsiSuffix = $null }
+    }
+    if ($Line -match "DEBUG|Script DEBUG") {
+        return @{ Color = "Blue"; AnsiPrefix = $null; AnsiSuffix = $null }
+    }
+    if ($Line -match "TRACE|Script TRACE") {
+        return @{ Color = "DarkGray"; AnsiPrefix = $null; AnsiSuffix = $null }
+    }
+    return @{ Color = "White"; AnsiPrefix = $null; AnsiSuffix = $null }
 }
 
 # Хранилище состояний файлов: путь -> { Reader, LastPosition, LogName }
@@ -408,13 +425,17 @@ try {
                         }
 
                         if ($shouldOutput) {
-                            $color = Get-ColorForLine $line
+                            $style = Get-ColorForLine $line
                             $prefixColor = Get-PrefixColor $filePath
                             $typePrefix = Get-LogTypePrefix $filePath
                             $prefix = Get-LogPrefix $filePath
                             Write-Host "[$typePrefix" -ForegroundColor $prefixColor -NoNewline
                             Write-Host "][$prefix] " -ForegroundColor $prefixColor -NoNewline
-                            Write-Host $line -ForegroundColor $color
+                            if ($style.AnsiPrefix) {
+                                Write-Host "$($style.AnsiPrefix)$line$($style.AnsiSuffix)"
+                            } else {
+                                Write-Host $line -ForegroundColor $style.Color
+                            }
                         }
                     }
 
