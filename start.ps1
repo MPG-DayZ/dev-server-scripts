@@ -145,6 +145,7 @@ $serverPath = Format-Path $serverPresetObj.serverPath
 $profilePath = Format-Path $serverPresetObj.profilePath
 $missionPath = Format-Path $serverPresetObj.missionPath
 $serverPort = $serverPresetObj.serverPort
+$serverIp = $serverPresetObj.serverIp
 $serverConfig = $serverPresetObj.serverConfig
 $isDiagMode = $serverPresetObj.isDiagMode
 $isFilePatching = $serverPresetObj.isFilePatching
@@ -335,7 +336,7 @@ if ((Test-Path $gamePath) -and (($startType -eq "all" -or $startType -eq "client
     Push-Location $gamePath
 
     $clientArgs = @(
-        "-connect=127.0.0.1", "-port=$serverPort", "-nosplash", "-noPause", "-noBenchmark", "-doLogs"
+        "-connect=$serverIp", "-port=$serverPort", "-nosplash", "-noPause", "-noBenchmark", "-doLogs"
     )
 
     if ($isDiagMode) {

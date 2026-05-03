@@ -1,5 +1,5 @@
 # Версия скриптов
-$ScriptVersion = "1.4.3"
+$ScriptVersion = "1.4.4"
 
 # Загрузка локали
 $localesPath = Join-Path $PSScriptRoot "locales.json"
@@ -337,6 +337,7 @@ if (-not (Test-Path $configPath)) {
                 profilePath = "C:/DayZServer/profiles"
                 missionPath = ""
                 serverPort = 2300
+                serverIp = "127.0.0.1"
                 serverConfig = "ServerDev.cfg"
                 isDiagMode = $false
                 isExperimental = $false
@@ -369,6 +370,7 @@ if (-not (Test-Path $configPath)) {
                 profilePath = "C:/DayZServerExperimental/profiles"
                 missionPath = ""
                 serverPort = 2400
+                serverIp = "127.0.0.1"
                 serverConfig = "ServerDev.cfg"
                 cleanLogs = "server"
                 isDiagMode = $false
@@ -401,6 +403,7 @@ if (-not (Test-Path $configPath)) {
                 profilePath = "C:/DayZServer/profiles"
                 missionPath = ""
                 serverPort = 2500
+                serverIp = "127.0.0.1"
                 serverConfig = "ServerDev.cfg"
                 isDiagMode = $true
                 isExperimental = $false
@@ -515,6 +518,7 @@ $serverPath = $serverPreset.serverPath
 $profilePath = $serverPreset.profilePath
 $missionPath = $serverPreset.missionPath
 $serverPort = $serverPreset.serverPort
+$serverIp = $serverPreset.serverIp
 $serverConfig = $serverPreset.serverConfig
 $isDiagMode = $serverPreset.isDiagMode
 $isFilePatching = $serverPreset.isFilePatching

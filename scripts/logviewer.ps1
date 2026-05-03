@@ -105,6 +105,7 @@ $PresetPrefixes = @{
 $script:filePrefixMap = @{}  # fullPath -> prefix (RPT, ADM, SCRIPT, CONSOLE)
 $script:fileTypeMap = @{}    # fullPath -> "server" | "client"
 $script:rawFiles = @()
+$script:wildcardSearches = @()  # массив @{ Path="..."; Pattern="..."; FileType="server"|"client" }
 
 function Get-PrefixForFile {
     param([string]$FilePath)
@@ -139,6 +140,12 @@ function Add-Files {
                         $script:fileTypeMap[$fullPath] = $FileType
                         $script:rawFiles += $fullPath
                     }
+                }
+            } else {
+                $script:wildcardSearches += @{
+                    Path = $SearchPath
+                    Pattern = $f
+                    FileType = $FileType
                 }
             }
         } else {
@@ -181,6 +188,12 @@ function Expand-PresetsInList {
                             $script:rawFiles += $fullPath
                         }
                     }
+                } else {
+                    $script:wildcardSearches += @{
+                        Path = $SearchPath
+                        Pattern = $pat
+                        FileType = $FileType
+                    }
                 }
             }
         } else {
@@ -214,6 +227,12 @@ if (-not [string]::IsNullOrEmpty($LogPreset)) {
                             $script:rawFiles += $fullPath
                         }
                     }
+                } else {
+                    $script:wildcardSearches += @{
+                        Path = $ProfilePath
+                        Pattern = $pat
+                        FileType = "server"
+                    }
                 }
             }
             
@@ -228,6 +247,12 @@ if (-not [string]::IsNullOrEmpty($LogPreset)) {
                             $script:fileTypeMap[$fullPath] = "client"
                             $script:rawFiles += $fullPath
                         }
+                    }
+                } else {
+                    $script:wildcardSearches += @{
+                        Path = $ClientLogsPath
+                        Pattern = $pat
+                        FileType = "client"
                     }
                 }
             }
@@ -342,14 +367,7 @@ foreach ($logFile in $logFilesArray) {
 }
 
 if ($fileStates.Count -eq 0) {
-    Write-Host "[logviewer] $(Get-T 'logviewer.no_files')" -ForegroundColor Red
-    Write-Host "`n$(Get-T 'logviewer.press_any_key')" -ForegroundColor Yellow
-    if ($autoCloseTime -lt 0) {
-        $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
-    } elseif ($autoCloseTime -gt 0) {
-        Start-Sleep -Seconds $autoCloseTime
-    }
-    exit 1
+    Write-Host "[logviewer] $(Get-T 'logviewer.no_files_waiting')" -ForegroundColor Yellow
 }
 
 Write-Host "`n[logviewer] $(Format-T 'logviewer.monitoring' (,$fileStates.Count))" -ForegroundColor Cyan
@@ -390,6 +408,40 @@ try {
                     }
                 }
                 $pendingFiles = $stillPending
+            }
+        }
+
+        # Проверяем wildcard-поиски
+        if ($script:wildcardSearches.Count -gt 0) {
+            $wildcardCheckCounter++
+            if ($wildcardCheckCounter -ge 25) {
+                $wildcardCheckCounter = 0
+
+                $stillSearching = @()
+                foreach ($entry in $script:wildcardSearches) {
+                    $found = Get-ChildItem -Path $entry.Path -Filter $entry.Pattern -File -ErrorAction SilentlyContinue
+                    if ($found) {
+                        foreach ($match in $found) {
+                            $fullPath = $match.FullName
+                            if (-not $trackedFiles.ContainsKey($fullPath)) {
+                                $trackedFiles[$fullPath] = $true
+                                $script:filePrefixMap[$fullPath] = Get-PrefixForFile $fullPath
+                                $script:fileTypeMap[$fullPath] = $entry.FileType
+
+                                $stream = [System.IO.File]::Open($fullPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+                                $fileStates[$fullPath] = @{
+                                    Reader = New-Object System.IO.StreamReader($stream)
+                                    LastPosition = 0
+                                    LogName = $script:filePrefixMap[$fullPath]
+                                }
+                                Write-Host "`n[logviewer] $(Format-T 'logviewer.file_appeared' (,$script:filePrefixMap[$fullPath]))" -ForegroundColor Green
+                            }
+                        }
+                    } else {
+                        $stillSearching += $entry
+                    }
+                }
+                $script:wildcardSearches = $stillSearching
             }
         }
 
