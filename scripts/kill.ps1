@@ -11,6 +11,8 @@ param (
 
     [string]$lang = "",
 
+    [string]$configPath = "",
+
     [Parameter(Mandatory = $false)]
     [switch]$silent = $false
 )
@@ -21,6 +23,15 @@ $cmdLang = $lang
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $scriptDir = Split-Path -Parent $scriptPath
+
+$customConfigPath = ""
+if ($configPath -ne "") {
+    if (-not [System.IO.Path]::IsPathRooted($configPath)) {
+        $configPath = Join-Path $scriptDir $configPath
+    }
+    $customConfigPath = $configPath
+}
+
 . (Join-Path $scriptDir "config.ps1")
 
 if ($cmdServerPreset -ne "") {

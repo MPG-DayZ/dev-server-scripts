@@ -1,5 +1,5 @@
 # Версия скриптов
-$ScriptVersion = "1.4.4"
+$ScriptVersion = "1.4.5"
 
 # Загрузка локали
 $localesPath = Join-Path $PSScriptRoot "locales.json"
@@ -61,7 +61,17 @@ function Get-LocalizedString {
     return $current
 }
 
-$configPath = Join-Path $PSScriptRoot "..\config.json"
+if ($customConfigPath) {
+    $configPath = $customConfigPath
+    if (-not (Test-Path $configPath)) {
+        Write-Host "Config file not found: $configPath" -ForegroundColor Red
+        Pause
+        exit 1
+    }
+}
+else {
+    $configPath = Join-Path $PSScriptRoot "..\config.json"
+}
 $script:isFirstRun = $false
 
 function Write-ColorOutput {

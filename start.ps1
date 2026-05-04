@@ -11,6 +11,8 @@ param (
 
     [string]$lang = "",
 
+    [string]$configPath = "",
+
     [switch]$help
 )
 
@@ -28,6 +30,7 @@ if ($help) {
     Write-Host "  -serverPreset <имя>             Имя серверного пресета (по умолчанию: из конфига)" -ForegroundColor White
     Write-Host "  -autoCloseTime <секунды>        Время автозакрытия окна в секундах (0 = не закрывать)" -ForegroundColor White
     Write-Host "  -lang <ru|en|auto>              Язык интерфейса (по умолчанию: из конфига)" -ForegroundColor White
+    Write-Host "  -configPath <путь>              Абсолютный путь к файлу конфига (по умолчанию: из корня проекта)" -ForegroundColor White
     Write-Host "  -help                           Показать эту справку" -ForegroundColor White
     Write-Host ""
     Write-Host "Доступные пресеты модов:" -ForegroundColor Yellow
@@ -65,6 +68,15 @@ $cmdServerPreset = $serverPreset
 
 # Обход типизации [string] в param() — config.ps1 присваивает объекты пресетов
 Remove-Variable -Name modPreset, serverPreset -Scope Script -ErrorAction SilentlyContinue
+
+# Кастомный путь к конфигу
+$customConfigPath = ""
+if ($configPath -ne "") {
+    if (-not [System.IO.Path]::IsPathRooted($configPath)) {
+        $configPath = Join-Path $PSScriptRoot $configPath
+    }
+    $customConfigPath = $configPath
+}
 
 . "$PSScriptRoot\scripts\config.ps1"
 
@@ -262,14 +274,14 @@ Write-Host ""
 
 # Остановка процессов
 if (-not $startType -or $startType -eq "all") {
-    & "$PSScriptRoot\scripts\kill.ps1" -mode "all" -silent -serverPreset $selectedServerPreset
+    & "$PSScriptRoot\scripts\kill.ps1" -mode "all" -silent -serverPreset $selectedServerPreset -configPath $customConfigPath
 }
 else {
     if ($startType -eq "server") {
-        & "$PSScriptRoot\scripts\kill.ps1" -mode "server" -silent -serverPreset $selectedServerPreset
+        & "$PSScriptRoot\scripts\kill.ps1" -mode "server" -silent -serverPreset $selectedServerPreset -configPath $customConfigPath
     }
     elseif ($startType -eq "client") {
-        & "$PSScriptRoot\scripts\kill.ps1" -mode "client" -silent -serverPreset $selectedServerPreset
+        & "$PSScriptRoot\scripts\kill.ps1" -mode "client" -silent -serverPreset $selectedServerPreset -configPath $customConfigPath
     }
 }
 
