@@ -1,5 +1,5 @@
 # Версия скриптов
-$ScriptVersion = "1.4.5"
+$ScriptVersion = "1.4.6"
 
 # Загрузка локали
 $localesPath = Join-Path $PSScriptRoot "locales.json"

@@ -10,7 +10,8 @@
       "client": "КЛИЕНТ",
       "logs": "ЛОГИ",
       "shortcut": "ЯРЛЫК",
-      "important": "ВАЖНО"
+      "important": "ВАЖНО",
+      "nobe": "NOBE"
     },
     "first_run": {
       "title": "ПЕРВЫЙ ЗАПУСК DAYZ СЕРВЕРА",
@@ -56,7 +57,12 @@
       "mission_path_not_found": "Не найдена папка миссии: {0}",
       "server_start_timeout": "Превышено время ожидания запуска сервера!",
       "no_presets": "Нет доступных пресетов типа {0}",
-      "cache_write_failed": "Не удалось сохранить кэш: {0}"
+      "cache_write_failed": "Не удалось сохранить кэш: {0}",
+      "nobe_pe_failed": "Не удалось разобрать PE-заголовок: {0}",
+      "nobe_init_not_found": "Не найдена функция инициализации BattlEye — эта версия exe не поддерживается патчером",
+      "nobe_vac_not_found": "Не найдена проверка VAC — эта версия exe не поддерживается патчером",
+      "nobe_vac_byte": "Байт в месте проверки VAC — 0x{0:X2}, ожидался jz (0x74)",
+      "nobe_write_failed": "Не удалось записать {0} (сервер запущен из этого файла?): {1}"
     },
     "interactive": {
       "title_mod": "Выберите пресет модов:",
@@ -93,6 +99,17 @@
       "press_any_key": "Нажмите любую клавишу для выхода...",
       "waiting_server": "Ожидание запуска сервера...",
       "server_started": "Сервер запущен!"
+    },
+    "nobe": {
+      "creating": "Создание NoBe-версии сервера (BattlEye отключён)...",
+      "outdated": "NoBe-версия устарела (оригинальный exe обновлён) — пересоздание...",
+      "analyzing": "Анализ exe ({0:N0} байт)...",
+      "locating_be": "Поиск функции инициализации BattlEye...",
+      "locating_vac": "Поиск проверки VAC...",
+      "created": "NoBe-версия создана (оригинал не изменён): {0}",
+      "copied_patched": "Исходный exe уже пропатчен — создана копия: {0}",
+      "already_patched": "Файл уже пропатчен, делать нечего.",
+      "check_only": "Режим проверки: только анализ, без записи."
     },
     "separator": "══════════════════════════",
     "logs": {
@@ -142,7 +159,8 @@
       "client": "CLIENT",
       "logs": "LOGS",
       "shortcut": "LINK",
-      "important": "IMPORTANT"
+      "important": "IMPORTANT",
+      "nobe": "NOBE"
     },
     "first_run": {
       "title": "DAYZ SERVER FIRST RUN",
@@ -188,7 +206,12 @@
       "mission_path_not_found": "Mission path not found: {0}",
       "server_start_timeout": "Server start timeout exceeded!",
       "no_presets": "No available presets of type {0}",
-      "cache_write_failed": "Failed to save cache: {0}"
+      "cache_write_failed": "Failed to save cache: {0}",
+      "nobe_pe_failed": "Failed to parse PE header: {0}",
+      "nobe_init_not_found": "BattlEye init function not found — this exe version is not supported by the patcher",
+      "nobe_vac_not_found": "VAC check not found — this exe version is not supported by the patcher",
+      "nobe_vac_byte": "VAC check site byte is 0x{0:X2}, expected jz (0x74)",
+      "nobe_write_failed": "Failed to write {0} (is a server running from this file?): {1}"
     },
     "interactive": {
       "title_mod": "Select mod preset:",
@@ -225,6 +248,17 @@
       "press_any_key": "Press any key to exit...",
       "waiting_server": "Waiting for server to start...",
       "server_started": "Server started!"
+    },
+    "nobe": {
+      "creating": "Creating NoBe server exe (BattlEye disabled)...",
+      "outdated": "NoBe exe is outdated (original exe was updated) — recreating...",
+      "analyzing": "Analyzing exe ({0:N0} bytes)...",
+      "locating_be": "Locating BattlEye init function...",
+      "locating_vac": "Locating VAC-ban check...",
+      "created": "NoBe exe created (original untouched): {0}",
+      "copied_patched": "Source exe is already patched — wrote copy: {0}",
+      "already_patched": "Already patched, nothing to do.",
+      "check_only": "Check mode: analysis only, nothing written."
     },
     "separator": "══════════════════════════",
     "logs": {

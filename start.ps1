@@ -228,6 +228,36 @@ else {
 }
 $clientExe = "$gamePath\$clientExeName"
 
+# Автосоздание NoBe-версии сервера (при включённом isDisableBE)
+# Оригинальный exe не изменяется — создаётся пропатченная копия рядом с ним.
+# Пересоздание выполняется не только при отсутствии копии, но и когда оригинал
+# новее неё (обновление игры), чтобы не запускать устаревший пропатченный exe
+if ($isDisableBE -and -not $isDiagMode -and ($startType -eq "all" -or $startType -eq "server")) {
+    $noBeSourceExe = "$serverPath\DayZServer_x64.exe"
+
+    if (-not (Test-Path $noBeSourceExe)) {
+        Write-ColorOutput "errors.executable_not_found" -ForegroundColor "Red" -Prefix "prefixes.error" -FormatArgs @("server", $noBeSourceExe)
+        Pause
+        exit 1
+    }
+
+    $noBeNeeded = -not (Test-Path $serverExe)
+    if (-not $noBeNeeded -and ((Get-Item -LiteralPath $noBeSourceExe).LastWriteTimeUtc -gt (Get-Item -LiteralPath $serverExe).LastWriteTimeUtc)) {
+        Write-ColorOutput "nobe.outdated" -ForegroundColor "Yellow" -Prefix "prefixes.nobe"
+        $noBeNeeded = $true
+    }
+
+    if ($noBeNeeded) {
+        Write-ColorOutput "nobe.creating" -ForegroundColor "Cyan" -Prefix "prefixes.nobe"
+
+        & "$PSScriptRoot\scripts\nobe.ps1" -SourceExePath $noBeSourceExe -OutputPath $serverExe -lang $script:currentLocale -configPath $customConfigPath
+        if ($LASTEXITCODE -ne 0) {
+            Pause
+            exit 1
+        }
+    }
+}
+
 if (($startType -eq "all" -or $startType -eq "server") -and -not (Test-Path $serverExe)) {
     Write-ColorOutput "errors.executable_not_found" -ForegroundColor "Red" -Prefix "prefixes.error" -FormatArgs @("server", $serverExe)
     Pause
